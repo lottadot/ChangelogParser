@@ -10,6 +10,7 @@
 		3430CCDF1D69F61A00184B40 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3430CCDE1D69F61A00184B40 /* Version.swift */; };
 		3430CCE11D69F66300184B40 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3430CCE01D69F66300184B40 /* Errors.swift */; };
 		3430CCE31D69FA5E00184B40 /* Parse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3430CCE21D69FA5E00184B40 /* Parse.swift */; };
+		3430CCE51D69FDD700184B40 /* Components.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3430CCE41D69FDD700184B40 /* Components.plist */; };
 		3462E6401D69DB9C0092DC77 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3462E63F1D69DB9C0092DC77 /* Assets.xcassets */; };
 		3462E64E1D69DB9C0092DC77 /* changelogparserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3462E64D1D69DB9C0092DC77 /* changelogparserTests.swift */; };
 		3462E6591D69DB9D0092DC77 /* changelogparserUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3462E6581D69DB9D0092DC77 /* changelogparserUITests.swift */; };
@@ -59,6 +60,7 @@
 		3430CCDE1D69F61A00184B40 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		3430CCE01D69F66300184B40 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		3430CCE21D69FA5E00184B40 /* Parse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parse.swift; sourceTree = "<group>"; };
+		3430CCE41D69FDD700184B40 /* Components.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Components.plist; sourceTree = "<group>"; };
 		3462E6381D69DB9C0092DC77 /* changelogparser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = changelogparser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3462E63B1D69DB9C0092DC77 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3462E63F1D69DB9C0092DC77 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 				3430CCE21D69FA5E00184B40 /* Parse.swift */,
 				3430CCDE1D69F61A00184B40 /* Version.swift */,
 				3430CCE01D69F66300184B40 /* Errors.swift */,
+				3430CCE41D69FDD700184B40 /* Components.plist */,
 			);
 			path = changelogparser;
 			sourceTree = "<group>";
@@ -285,6 +288,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3430CCE51D69FDD700184B40 /* Components.plist in Resources */,
 				3462E6401D69DB9C0092DC77 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
