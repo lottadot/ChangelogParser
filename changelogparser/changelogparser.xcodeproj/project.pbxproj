@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3462E63C1D69DB9C0092DC77 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3462E63B1D69DB9C0092DC77 /* AppDelegate.swift */; };
-		3462E63E1D69DB9C0092DC77 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3462E63D1D69DB9C0092DC77 /* ViewController.swift */; };
+		3430CCDF1D69F61A00184B40 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3430CCDE1D69F61A00184B40 /* Version.swift */; };
+		3430CCE11D69F66300184B40 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3430CCE01D69F66300184B40 /* Errors.swift */; };
+		3430CCE31D69FA5E00184B40 /* Parse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3430CCE21D69FA5E00184B40 /* Parse.swift */; };
 		3462E6401D69DB9C0092DC77 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3462E63F1D69DB9C0092DC77 /* Assets.xcassets */; };
-		3462E6431D69DB9C0092DC77 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3462E6411D69DB9C0092DC77 /* Main.storyboard */; };
 		3462E64E1D69DB9C0092DC77 /* changelogparserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3462E64D1D69DB9C0092DC77 /* changelogparserTests.swift */; };
 		3462E6591D69DB9D0092DC77 /* changelogparserUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3462E6581D69DB9D0092DC77 /* changelogparserUITests.swift */; };
 		3462E6691D69DFDB0092DC77 /* ChangelogKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3462E6681D69DFDB0092DC77 /* ChangelogKit.framework */; };
@@ -19,6 +19,7 @@
 		3462E66E1D69E0540092DC77 /* Commandant.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3462E66C1D69E0540092DC77 /* Commandant.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3462E6701D69E0590092DC77 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3462E66F1D69E0590092DC77 /* Result.framework */; };
 		3462E6711D69E0590092DC77 /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3462E66F1D69E0590092DC77 /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3462E6771D69E1090092DC77 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3462E6761D69E1090092DC77 /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,11 +56,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3430CCDE1D69F61A00184B40 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
+		3430CCE01D69F66300184B40 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		3430CCE21D69FA5E00184B40 /* Parse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parse.swift; sourceTree = "<group>"; };
 		3462E6381D69DB9C0092DC77 /* changelogparser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = changelogparser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3462E63B1D69DB9C0092DC77 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		3462E63D1D69DB9C0092DC77 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		3462E63F1D69DB9C0092DC77 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		3462E6421D69DB9C0092DC77 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3462E6441D69DB9C0092DC77 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3462E6491D69DB9C0092DC77 /* changelogparserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = changelogparserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3462E64D1D69DB9C0092DC77 /* changelogparserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = changelogparserTests.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 		3462E6731D69E0770092DC77 /* ChangelogKit.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = ChangelogKit.framework.dSYM; path = ../Carthage/Build/Mac/ChangelogKit.framework.dSYM; sourceTree = "<group>"; };
 		3462E6741D69E0770092DC77 /* Commandant.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Commandant.framework.dSYM; path = ../Carthage/Build/Mac/Commandant.framework.dSYM; sourceTree = "<group>"; };
 		3462E6751D69E0770092DC77 /* Result.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Result.framework.dSYM; path = ../Carthage/Build/Mac/Result.framework.dSYM; sourceTree = "<group>"; };
+		3462E6761D69E1090092DC77 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,10 +131,12 @@
 			isa = PBXGroup;
 			children = (
 				3462E63B1D69DB9C0092DC77 /* AppDelegate.swift */,
-				3462E63D1D69DB9C0092DC77 /* ViewController.swift */,
 				3462E63F1D69DB9C0092DC77 /* Assets.xcassets */,
-				3462E6411D69DB9C0092DC77 /* Main.storyboard */,
 				3462E6441D69DB9C0092DC77 /* Info.plist */,
+				3462E6761D69E1090092DC77 /* main.swift */,
+				3430CCE21D69FA5E00184B40 /* Parse.swift */,
+				3430CCDE1D69F61A00184B40 /* Version.swift */,
+				3430CCE01D69F66300184B40 /* Errors.swift */,
 			);
 			path = changelogparser;
 			sourceTree = "<group>";
@@ -185,7 +190,6 @@
 				3462E6341D69DB9C0092DC77 /* Sources */,
 				3462E6351D69DB9C0092DC77 /* Frameworks */,
 				3462E6361D69DB9C0092DC77 /* Resources */,
-				3462E6671D69DF960092DC77 /* Extract CLI */,
 				3462E66B1D69DFDB0092DC77 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -282,7 +286,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3462E6401D69DB9C0092DC77 /* Assets.xcassets in Resources */,
-				3462E6431D69DB9C0092DC77 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,32 +305,15 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		3462E6671D69DF960092DC77 /* Extract CLI */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Extract CLI";
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(EXECUTABLE_PATH)",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n#\n# Extracts the carthage CLI tool from its application bundle. Meant to be run\n# as part of an Xcode Run Script build phase.\n\ncp -v \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_NAME}\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		3462E6341D69DB9C0092DC77 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3462E63E1D69DB9C0092DC77 /* ViewController.swift in Sources */,
-				3462E63C1D69DB9C0092DC77 /* AppDelegate.swift in Sources */,
+				3430CCDF1D69F61A00184B40 /* Version.swift in Sources */,
+				3430CCE31D69FA5E00184B40 /* Parse.swift in Sources */,
+				3430CCE11D69F66300184B40 /* Errors.swift in Sources */,
+				3462E6771D69E1090092DC77 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,17 +347,6 @@
 			targetProxy = 3462E6551D69DB9D0092DC77 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		3462E6411D69DB9C0092DC77 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3462E6421D69DB9C0092DC77 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		3462E65B1D69DB9D0092DC77 /* Debug */ = {
@@ -461,8 +436,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"\"$(SRCROOT)/../Carthage/Build/Mac\"",
+				);
 				INFOPLIST_FILE = changelogparser/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/. @executable_path/ChangelogKit.framework/Versions/Current/Frameworks /Library/Frameworks /Library/Frameworks/ChagelogKit.framework/Versions/Current/Frameworks $(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lottadot.changelogparser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -473,8 +454,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"\"$(SRCROOT)/../Carthage/Build/Mac\"",
+				);
 				INFOPLIST_FILE = changelogparser/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/. @executable_path/ChangelogKit.framework/Versions/Current/Frameworks /Library/Frameworks /Library/Frameworks/ChagelogKit.framework/Versions/Current/Frameworks $(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lottadot.changelogparser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -549,6 +536,7 @@
 				3462E65F1D69DB9D0092DC77 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3462E6601D69DB9D0092DC77 /* Build configuration list for PBXNativeTarget "changelogparserTests" */ = {
 			isa = XCConfigurationList;
@@ -557,6 +545,7 @@
 				3462E6621D69DB9D0092DC77 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3462E6631D69DB9D0092DC77 /* Build configuration list for PBXNativeTarget "changelogparserUITests" */ = {
 			isa = XCConfigurationList;
@@ -565,6 +554,7 @@
 				3462E6651D69DB9D0092DC77 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
