@@ -14,17 +14,16 @@ public enum ChangelogParserError: ErrorType, Equatable {
     /// One or more arguments was invalid.
     case InvalidArgument(description: String)
     
-    /// Transition not found
-    case InvalidTransition(description: String)
+    /// Parse Failed
+    case ParseFailed(description: String)
     
-    /// Transition failed
-    case TransitionFailed(description: String)
+    /// Output File Write Failed
+    case FileWriteFailed(description: String)
     
-    /// Issue not found
-    case InvalidIssue(description: String)
+    /// Build is TBD Failed
+    case BuildIsTBD(description: String)
     
-    /// Comment Failed
-    case CommentFailed(description: String)
+    case BuildHasNoTicketsNorComments(description: String)
 }
 
 public func == (lhs: ChangelogParserError, rhs: ChangelogParserError) -> Bool {
@@ -43,18 +42,17 @@ extension ChangelogParserError: CustomStringConvertible {
         case let .InvalidArgument(description):
             return description
             
-        case let .InvalidTransition(description):
+        case let .ParseFailed(description):
             return description
             
-        case let .TransitionFailed(description):
+        case let .BuildIsTBD(description):
             return description
             
-        case let .InvalidIssue(description):
+        case let .FileWriteFailed(description):
             return description
             
-        case let .CommentFailed(description):
+        case let .BuildHasNoTicketsNorComments(description):
             return description
-            
         }
     }
 }

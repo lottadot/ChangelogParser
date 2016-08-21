@@ -18,8 +18,8 @@ if let jiraUpdaterPath = NSBundle.mainBundle().executablePath {
 
 struct ChangelogParserResult {
     var success = false
-    var error: NSError? = nil
-    var data: AnyObject? = nil
+    var error: ChangelogParserError? = nil
+    var data: Changelog? = nil
 }
 
 let registry = CommandRegistry<ChangelogParserError>()
