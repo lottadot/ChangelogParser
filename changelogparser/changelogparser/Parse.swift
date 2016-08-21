@@ -30,14 +30,17 @@ public struct ParseCommand: CommandType {
     public struct Options: OptionsType {
         public let file: String?
         public let outfile: String?
+        public let withIssues: Bool?
         
         public static func create(file: String?)
             -> (outfile: String?)
+            -> (withIssues: Bool?)
             -> Options {
-                return { outfile in
+                return { outfile in { withIssues in
                     return self.init(file: file,
-                                     outfile: outfile)
-                    }
+                                     outfile: outfile,
+                                     withIssues: withIssues)
+                    } }
         }
         
         public static func evaluate(m: CommandMode) -> Result<Options, CommandantError<ChangelogParserError>> {
@@ -47,13 +50,16 @@ public struct ParseCommand: CommandType {
                                 defaultValue: "CHANGELOG", usage: "the absolute path of the CHANGELOG file parse")
                 <*> m <| Option(key: "outfile",
                                 defaultValue: "CHANGELOG-RELEASENOTES.md", usage: "the out release notes file to build")
+                <*> m <| Option(key: "withIssues",
+                                defaultValue: false, usage: "show IssueIds in STDOUT")
         }
     }
     
     public func run(options: Options) -> Result<(), ChangelogParserError> {
         
         guard let file:String = options.file,
-            let outfile:String  = options.outfile
+            let outfile:String  = options.outfile,
+            let showIssues:Bool = options.withIssues
             else {
                 return .Failure(.InvalidArgument(description: "Missing values: file, outfile"))
         }
@@ -69,7 +75,7 @@ public struct ParseCommand: CommandType {
             text.enumerateLines { lines.append($0.line)}
             
             let cla = ChangelogAnalyzer(changelog: lines)
-            getLog(cla, completion: { (result) in
+            self.getLog(cla, completion: { (result) in
                
                 guard let log = result.data where result.success else {
                     print(ChangelogParserError.ParseFailed(description: "Parse failed").description)
@@ -81,6 +87,12 @@ public struct ParseCommand: CommandType {
                     if let error = writeResult.error where !writeResult.success {
                         print(error.description)
                         exit(EXIT_FAILURE)
+                    }
+                    
+                    if showIssues {
+                        if let tikets = self.getTicketIds(log) {
+                            print(tikets)
+                        }
                     }
                     
                     exit(EXIT_SUCCESS)
@@ -117,31 +129,6 @@ public struct ParseCommand: CommandType {
         }
     }
     
-    /// Obtain the data from the `ChangelogAnalyzer` and build a `Changelog` representation of it.
-    private func getLog(cla: ChangelogAnalyzer, completion: (result: ChangelogParserResult) -> ()) {
-
-        if cla.isTBD() {
-            let error = ChangelogParserError.BuildIsTBD(description: "Build date is To Be Determined")
-            let result = ChangelogParserResult.init(success: false, error: error, data: nil)
-            completion(result: result)
-            return
-        }
-        
-        guard let buildVersion = cla.buildVersionString(), let buildNumber = cla.buildNumber(), let buildDate = cla.buildDate(), let comments = cla.comments(), let tickets = cla.tickets() where (!comments.isEmpty || !tickets.isEmpty) else {
-
-            let result = ChangelogParserResult.init(success: false, error: .BuildHasNoTicketsNorComments(description: "Changelog must have tickets or comments defined"), data: nil)
-            completion(result: result)
-            return
-        }
-        
-        //print(comments)
-        //print(tickets)
-        
-        let logData = Changelog(version: buildVersion, buildNumber: buildNumber, date: buildDate, comments: comments, tickets: tickets)
-        let result = ChangelogParserResult(success: true, error: nil, data: logData)
-        completion(result: result)
-    }
-    
     /// Creates a Markdown formatted string representation of the Changelog.
     private func textualize(changelog: Changelog) -> String {
         
@@ -162,4 +149,49 @@ public struct ParseCommand: CommandType {
         
         return text
     }
+    
+    /// Obtain the data from the `ChangelogAnalyzer` and build a `Changelog` representation of it.
+    private func getLog(cla: ChangelogAnalyzer, completion: (result: ChangelogParserResult) -> ()) {
+        
+        if cla.isTBD() {
+            let error = ChangelogParserError.BuildIsTBD(description: "Build date is To Be Determined")
+            let result = ChangelogParserResult.init(success: false, error: error, data: nil)
+            completion(result: result)
+            return
+        }
+        
+        guard let buildVersion = cla.buildVersionString(), let buildNumber = cla.buildNumber(), let buildDate = cla.buildDate(), let comments = cla.comments(), let tickets = cla.tickets() where (!comments.isEmpty || !tickets.isEmpty) else {
+            
+            let result = ChangelogParserResult.init(success: false, error: .BuildHasNoTicketsNorComments(description: "Changelog must have tickets or comments defined"), data: nil)
+            completion(result: result)
+            return
+        }
+        
+        //print(comments)
+        //print(tickets)
+        
+        let logData = Changelog(version: buildVersion, buildNumber: buildNumber, date: buildDate, comments: comments, tickets: tickets)
+        let result = ChangelogParserResult(success: true, error: nil, data: logData)
+        completion(result: result)
+    }
+    
+    private func getTicketIds(changelog: Changelog) -> String? {
+
+        guard let tickets = changelog.tickets where !tickets.isEmpty else {
+            return nil
+        }
+        
+        var ticketIds:String = ""
+        
+        for ticket in tickets.reverse() {
+            if let ticketId = ticket.componentsSeparatedByString(" ").first {
+                
+                let appending = ( ticketIds.isEmpty ) ? ticketId : ",\(ticketId)"
+                ticketIds = ticketIds + appending
+            }
+        }
+        
+        return ticketIds
+    }
 }
+

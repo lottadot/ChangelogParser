@@ -31,6 +31,9 @@ Parse a Changelog
 
 [--outfile (string)]
 	the out release notes file to build
+	
+--withIssues]
+	show IssueIds in STDOUT
 ```
 
 So here we go:
@@ -60,6 +63,13 @@ $ cat CHANGELOG-RELEASENOTES.md
 * IssueId3 This is a Ticket Issue3
 * IssueId4 This is a Ticket Issue4
 
+```
+
+or to capture the IssueId's used in this build:
+
+```
+$ changelogparser parse --withIssues
+IssueId3,IssueId4
 ```
 
 #### Get started

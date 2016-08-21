@@ -61,6 +61,7 @@
 		3430CCE01D69F66300184B40 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		3430CCE21D69FA5E00184B40 /* Parse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parse.swift; sourceTree = "<group>"; };
 		3430CCE41D69FDD700184B40 /* Components.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Components.plist; sourceTree = "<group>"; };
+		3430CCEA1D6A29D400184B40 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		3462E6381D69DB9C0092DC77 /* changelogparser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = changelogparser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3462E63B1D69DB9C0092DC77 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3462E63F1D69DB9C0092DC77 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -116,6 +117,7 @@
 				3462E6571D69DB9D0092DC77 /* changelogparserUITests */,
 				3462E6391D69DB9C0092DC77 /* Products */,
 				3462E6661D69DC640092DC77 /* Frameworks */,
+				3430CCEA1D6A29D400184B40 /* MyPlayground.playground */,
 			);
 			sourceTree = "<group>";
 		};
