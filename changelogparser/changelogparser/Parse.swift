@@ -22,12 +22,6 @@ struct Changelog {
     var tickets:[String]? = nil
 }
 
-struct StderrOutputStream: OutputStreamType {
-    mutating func write(string: String) {
-        fputs(string, stderr)
-    }
-}
-
 /// Parse a changelog
 public struct ParseCommand: CommandType {
     public let verb = "parse"
@@ -76,16 +70,10 @@ public struct ParseCommand: CommandType {
                 return .Failure(.InvalidArgument(description: "Missing values: file, outfile"))
         }
 
-        //print(file)
-        //print(outfile)
-        
         let path = NSURL(fileURLWithPath: file)
         do {
 
-            //let runLoop = CFRunLoopGetCurrent()
-
             let text = try NSString(contentsOfURL: path, encoding: NSUTF8StringEncoding) as String
-
             var lines:[String] = []
             text.enumerateLines { lines.append($0.line)}
             
@@ -184,9 +172,6 @@ public struct ParseCommand: CommandType {
             completion(result: result)
             return
         }
-        
-        //print(comments)
-        //print(tickets)
         
         let logData = Changelog(version: buildVersion, buildNumber: buildNumber, date: buildDate, comments: comments, tickets: tickets)
         let result = ChangelogParserResult(success: true, error: nil, data: logData)
