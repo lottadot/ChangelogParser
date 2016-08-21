@@ -149,14 +149,14 @@ public struct ParseCommand: CommandType {
         var text = "\(changelog.version) #\(buildString)\n"
         
         if let comments = changelog.comments where !comments.isEmpty {
-            for comment in comments {
-                text = text + "* \(comment)"
+            for comment in comments.reverse() {
+                text = text + "* \(comment)\n"
             }
         }
         
         if let tickets = changelog.tickets where !tickets.isEmpty {
-            for ticket in tickets {
-                text = text + "* \(ticket)"
+            for ticket in tickets.reverse() {
+                text = text + "* \(ticket)\n"
             }
         }
         
