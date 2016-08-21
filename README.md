@@ -69,7 +69,16 @@ or to capture the IssueId's used in this build:
 
 ```
 $ changelogparser parse --withIssues
-IssueId3,IssueId4
+$ cat CHANGELOG-ISSUES.TXT
+```
+
+To use this in combination with JiraUpdater:
+
+```
+$ changelogparser parse --withIssues
+$ jiraUpdater update  --issueids "$(< CHANGELOG-ISSUES.TXT)"
+// ()COMING SOON as of 2016-08-21)
+$ jiraUpdater comment --issueids --message "$(< CHANGELOG-VERSION.TXT)"
 ```
 
 #### Get started

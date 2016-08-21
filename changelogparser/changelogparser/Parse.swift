@@ -22,6 +22,12 @@ struct Changelog {
     var tickets:[String]? = nil
 }
 
+struct StderrOutputStream: OutputStreamType {
+    mutating func write(string: String) {
+        fputs(string, stderr)
+    }
+}
+
 /// Parse a changelog
 public struct ParseCommand: CommandType {
     public let verb = "parse"
@@ -51,7 +57,7 @@ public struct ParseCommand: CommandType {
                 <*> m <| Option(key: "outfile",
                                 defaultValue: "CHANGELOG-RELEASENOTES.md", usage: "the out release notes file to build")
                 <*> m <| Option(key: "withIssues",
-                                defaultValue: false, usage: "show IssueIds in STDOUT")
+                                defaultValue: false, usage: "write IssueIds to CHANGELOG-ISSUES.TXT")
         }
     }
     
@@ -89,13 +95,22 @@ public struct ParseCommand: CommandType {
                         exit(EXIT_FAILURE)
                     }
                     
-                    if showIssues {
-                        if let tikets = self.getTicketIds(log) {
-                            print(tikets)
-                        }
+                    if let tickets = self.getTicketIds(log) where showIssues {
+
+                        self.writeIssues(tickets, file: "CHANGELOG-ISSUES.TXT", completion: { (writeIssuesResult) in
+                            
+                            if let error = writeIssuesResult.error where !writeIssuesResult.success {
+                                print(error.description)
+                                exit(EXIT_FAILURE)
+                            }
+                            exit(EXIT_SUCCESS)
+                        })
+                        
+                    } else {
+                        exit(EXIT_SUCCESS)
                     }
                     
-                    exit(EXIT_SUCCESS)
+                    
                 })
                 exit(EXIT_SUCCESS)
             })
@@ -192,6 +207,23 @@ public struct ParseCommand: CommandType {
         }
         
         return ticketIds
+    }
+    
+    /// Write Issues to a file on disk.
+    private func writeIssues(issueText: String, file: String, completion: (result: ChangelogParserResult) -> ()) {
+        
+        guard let outUrl:NSURL = NSURL.init(fileURLWithPath: file) else {
+            completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file failed"), data: nil))
+            return
+        }
+        
+        do {
+            try issueText.writeToURL(outUrl, atomically: false, encoding: NSUTF8StringEncoding)
+            completion(result: ChangelogParserResult(success: true, error: nil, data: nil))
+            
+        } catch let error as NSError {
+            completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file \(outUrl) failed: \(error.localizedDescription)"), data: nil))
+        }
     }
 }
 
