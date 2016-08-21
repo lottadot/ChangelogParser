@@ -32,21 +32,24 @@ struct StderrOutputStream: OutputStreamType {
 public struct ParseCommand: CommandType {
     public let verb = "parse"
     public let function = "Parse a Changelog"
-    
+
     public struct Options: OptionsType {
         public let file: String?
         public let outfile: String?
         public let withIssues: Bool?
+        public let withVersion: Bool?
         
         public static func create(file: String?)
             -> (outfile: String?)
             -> (withIssues: Bool?)
+            -> (withVersion: Bool?)
             -> Options {
-                return { outfile in { withIssues in
+                return { outfile in { withIssues in { withVersion in
                     return self.init(file: file,
                                      outfile: outfile,
-                                     withIssues: withIssues)
-                    } }
+                                     withIssues: withIssues,
+                                     withVersion: withVersion)
+                    } } }
         }
         
         public static func evaluate(m: CommandMode) -> Result<Options, CommandantError<ChangelogParserError>> {
@@ -58,6 +61,8 @@ public struct ParseCommand: CommandType {
                                 defaultValue: "CHANGELOG-RELEASENOTES.md", usage: "the out release notes file to build")
                 <*> m <| Option(key: "withIssues",
                                 defaultValue: false, usage: "write IssueIds to CHANGELOG-ISSUES.TXT")
+                <*> m <| Option(key: "withVersion",
+                                defaultValue: false, usage: "write Version Information to CHANGELOG-VERSION.TXT")
         }
     }
     
@@ -65,16 +70,20 @@ public struct ParseCommand: CommandType {
         
         guard let file:String = options.file,
             let outfile:String  = options.outfile,
-            let showIssues:Bool = options.withIssues
+            let showIssues:Bool = options.withIssues,
+            let showVersion:Bool = options.withVersion
             else {
                 return .Failure(.InvalidArgument(description: "Missing values: file, outfile"))
         }
-        
+
         //print(file)
         //print(outfile)
         
         let path = NSURL(fileURLWithPath: file)
         do {
+
+            //let runLoop = CFRunLoopGetCurrent()
+
             let text = try NSString(contentsOfURL: path, encoding: NSUTF8StringEncoding) as String
 
             var lines:[String] = []
@@ -85,6 +94,7 @@ public struct ParseCommand: CommandType {
                
                 guard let log = result.data where result.success else {
                     print(ChangelogParserError.ParseFailed(description: "Parse failed").description)
+                    //return .Failure(.ParseFailed(description: "Parse failed"))
                     exit(EXIT_FAILURE)
                 }
                 
@@ -95,35 +105,28 @@ public struct ParseCommand: CommandType {
                         exit(EXIT_FAILURE)
                     }
                     
-                    if let tickets = self.getTicketIds(log) where showIssues {
-
-                        self.writeIssues(tickets, file: "CHANGELOG-ISSUES.TXT", completion: { (writeIssuesResult) in
-                            
-                            if let error = writeIssuesResult.error where !writeIssuesResult.success {
-                                print(error.description)
-                                exit(EXIT_FAILURE)
-                            }
-                            exit(EXIT_SUCCESS)
-                        })
-                        
-                    } else {
-                        exit(EXIT_SUCCESS)
+                    if let info:String = self.buildInfo(log) where showVersion {
+                        print(info)
                     }
                     
-                    
+                    if let tickets:String = self.getTicketIds(log) where showIssues {
+                        print(tickets)
+                    }
+                
+                    exit(EXIT_SUCCESS)
                 })
-                exit(EXIT_SUCCESS)
             })
 
-            
+            CFRunLoopRun()
+            return .Success(())
         } catch let error as NSError {
             
             print(ChangelogParserError.ParseFailed(description: error.localizedDescription).description)
-            exit(EXIT_FAILURE)
+            //exit(EXIT_FAILURE)
+            return .Failure(.ParseFailed(description: "Parse failed"))
         }
         
-        CFRunLoopRun()
-        return .Failure(.ParseFailed(description: "Parse failed"))
+        // return .Failure(.ParseFailed(description: "Parse failed"))
     }
     
     /// Write a `Changelog` to the provided file on disk.
@@ -225,5 +228,34 @@ public struct ParseCommand: CommandType {
             completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file \(outUrl) failed: \(error.localizedDescription)"), data: nil))
         }
     }
+    
+    /// Write Version to a file on disk.
+    private func writeVersion(version: String, build:String, file: String, completion: (result: ChangelogParserResult) -> ()) {
+        
+        guard let outUrl:NSURL = NSURL.init(fileURLWithPath: file) else {
+            completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file failed"), data: nil))
+            return
+        }
+        
+        do {
+            let text = version + " #" + build
+            try text.writeToURL(outUrl, atomically: false, encoding: NSUTF8StringEncoding)
+            completion(result: ChangelogParserResult(success: true, error: nil, data: nil))
+            
+        } catch let error as NSError {
+            completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file \(outUrl) failed: \(error.localizedDescription)"), data: nil))
+        }
+    }
+    
+    /// Build a string with 'Version: x.y.z Number: buildnumber'
+    private func buildInfo(log: Changelog) -> String {
+        
+        guard let buildVersion:String = log.version, let buildNumber:UInt = log.buildNumber, let buildString:String = String(buildNumber) else {
+            return ""
+        }
+        
+        return "Version: \(buildVersion) Number:\(buildString)"
+    }
+
 }
 
