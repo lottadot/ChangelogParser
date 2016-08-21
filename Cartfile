@@ -1,0 +1,2 @@
+#github "lottadot/Changelogkit" "develop"
+git "git@github.com:lottadot/Changelogkit.git" "develop"
