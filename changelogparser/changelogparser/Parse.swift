@@ -102,7 +102,7 @@ public struct ParseCommand: CommandType {
     /// Write a `Changelog` to the provided file on disk.
     private func writeLog(log: Changelog, file: String, completion: (result: ChangelogParserResult) -> ()) {
         
-        guard let outUrl = NSURL.init(string: file) else {
+        guard let outUrl:NSURL = NSURL.init(fileURLWithPath: file) else {
             completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file failed"), data: nil))
             return
         }
