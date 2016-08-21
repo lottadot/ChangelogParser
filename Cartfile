@@ -1,2 +1,5 @@
 #github "lottadot/Changelogkit" "develop"
 git "git@github.com:lottadot/Changelogkit.git" "develop"
+github "Carthage/Commandant" "0.10.0"
+github "antitypical/Result" "2.1.0"
+
