@@ -1,3 +1,4 @@
-git "git@github.com:lottadot/Changelogkit.git" "0dc0e14434cf065b476578fd9c71e9727b2cb07a"
-github "antitypical/Result" "2.1.0"
-github "Carthage/Commandant" "0.10.0"
+git "git@github.com:lottadot/Changelogkit.git" "0.1.0"
+github "lottadot/Changelogkit" "0.1.0"
+github "antitypical/Result" "3.0.0"
+github "Carthage/Commandant" "0.11.1"

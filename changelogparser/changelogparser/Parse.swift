@@ -17,26 +17,26 @@ import Cocoa
 struct Changelog {
     var version: String
     var buildNumber: UInt
-    var date: NSDate
+    var date: Date
     var comments:[String]? = nil
     var tickets:[String]? = nil
 }
 
 /// Parse a changelog
-public struct ParseCommand: CommandType {
+public struct ParseCommand: CommandProtocol {
     public let verb = "parse"
     public let function = "Parse a Changelog"
 
-    public struct Options: OptionsType {
+    public struct Options: OptionsProtocol {
         public let file: String?
         public let outfile: String?
         public let withIssues: Bool?
         public let withVersion: Bool?
         
-        public static func create(file: String?)
-            -> (outfile: String?)
-            -> (withIssues: Bool?)
-            -> (withVersion: Bool?)
+        public static func create(_ file: String?)
+            -> (_ outfile: String?)
+            -> (_ withIssues: Bool?)
+            -> (_ withVersion: Bool?)
             -> Options {
                 return { outfile in { withIssues in { withVersion in
                     return self.init(file: file,
@@ -46,7 +46,7 @@ public struct ParseCommand: CommandType {
                     } } }
         }
         
-        public static func evaluate(m: CommandMode) -> Result<Options, CommandantError<ChangelogParserError>> {
+        public static func evaluate(_ m: CommandMode) -> Result<Options, CommandantError<ChangelogParserError>> {
             
             return create
                 <*> m <| Option(key: "file",
@@ -60,44 +60,44 @@ public struct ParseCommand: CommandType {
         }
     }
     
-    public func run(options: Options) -> Result<(), ChangelogParserError> {
+    public func run(_ options: Options) -> Result<(), ChangelogParserError> {
         
         guard let file:String = options.file,
             let outfile:String  = options.outfile,
             let showIssues:Bool = options.withIssues,
-            let showVersion:Bool = options.withVersion
+            let _:Bool = options.withVersion
             else {
-                return .Failure(.InvalidArgument(description: "Missing values: file, outfile"))
+                return .failure(.invalidArgument(description: "Missing values: file, outfile"))
         }
 
-        let path = NSURL(fileURLWithPath: file)
+        let path = URL(fileURLWithPath: file)
         do {
 
-            let text = try NSString(contentsOfURL: path, encoding: NSUTF8StringEncoding) as String
+            let text = try NSString(contentsOf: path, encoding: String.Encoding.utf8.rawValue) as String
             var lines:[String] = []
-            text.enumerateLines { lines.append($0.line)}
+            text.enumerateLines{ (line, stop) -> () in
+                lines.append(line)
+            }
             
             let cla = ChangelogAnalyzer(changelog: lines)
             self.getLog(cla, completion: { (result) in
                
-                guard let log = result.data where result.success else {
-                    print(ChangelogParserError.ParseFailed(description: "Parse failed").description)
+                guard let log = result.data , result.success else {
+                    print(ChangelogParserError.parseFailed(description: "Parse failed").description)
                     //return .Failure(.ParseFailed(description: "Parse failed"))
                     exit(EXIT_FAILURE)
                 }
                 
                 self.writeLog(log, file: outfile, completion: { (writeResult) in
                     
-                    if let error = writeResult.error where !writeResult.success {
+                    if let error = writeResult.error , !writeResult.success {
                         print(error.description)
                         exit(EXIT_FAILURE)
                     }
                     
-                    if let info:String = self.buildInfo(log) where showVersion {
-                        print(info)
-                    }
+                    print(self.buildInfo(log))
                     
-                    if let tickets:String = self.getTicketIds(log) where showIssues {
+                    if let tickets:String = self.getTicketIds(log) , showIssues {
                         print(tickets)
                     }
                 
@@ -106,49 +106,46 @@ public struct ParseCommand: CommandType {
             })
 
             CFRunLoopRun()
-            return .Success(())
+            return .success(())
         } catch let error as NSError {
             
-            print(ChangelogParserError.ParseFailed(description: error.localizedDescription).description)
+            print(ChangelogParserError.parseFailed(description: error.localizedDescription).description)
             //exit(EXIT_FAILURE)
-            return .Failure(.ParseFailed(description: "Parse failed"))
+            return .failure(.parseFailed(description: "Parse failed"))
         }
         
         // return .Failure(.ParseFailed(description: "Parse failed"))
     }
     
     /// Write a `Changelog` to the provided file on disk.
-    private func writeLog(log: Changelog, file: String, completion: (result: ChangelogParserResult) -> ()) {
+    fileprivate func writeLog(_ log: Changelog, file: String, completion: (_ result: ChangelogParserResult) -> ()) {
         
-        guard let outUrl:NSURL = NSURL.init(fileURLWithPath: file) else {
-            completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file failed"), data: nil))
-            return
-        }
-        
+        let outUrl:URL = URL.init(fileURLWithPath: file)
+
         do {
             let markdown = textualize(log)
-            try markdown.writeToURL(outUrl, atomically: false, encoding: NSUTF8StringEncoding)
-            completion(result: ChangelogParserResult(success: true, error: nil, data: nil))
+            try markdown.write(to: outUrl, atomically: false, encoding: String.Encoding.utf8)
+            completion(ChangelogParserResult(success: true, error: nil, data: nil))
 
         } catch let error as NSError {
-            completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file \(outUrl) failed: \(error.localizedDescription)"), data: nil))
+            completion(ChangelogParserResult(success: false, error: .fileWriteFailed(description: "Write to output file \(outUrl) failed: \(error.localizedDescription)"), data: nil))
         }
     }
     
     /// Creates a Markdown formatted string representation of the Changelog.
-    private func textualize(changelog: Changelog) -> String {
+    fileprivate func textualize(_ changelog: Changelog) -> String {
         
         let buildString = String(changelog.buildNumber)
         var text = "\(changelog.version) #\(buildString)\n"
         
-        if let comments = changelog.comments where !comments.isEmpty {
-            for comment in comments.reverse() {
+        if let comments = changelog.comments , !comments.isEmpty {
+            for comment in comments.reversed() {
                 text = text + "* \(comment)\n"
             }
         }
         
-        if let tickets = changelog.tickets where !tickets.isEmpty {
-            for ticket in tickets.reverse() {
+        if let tickets = changelog.tickets , !tickets.isEmpty {
+            for ticket in tickets.reversed() {
                 text = text + "* \(ticket)\n"
             }
         }
@@ -157,37 +154,37 @@ public struct ParseCommand: CommandType {
     }
     
     /// Obtain the data from the `ChangelogAnalyzer` and build a `Changelog` representation of it.
-    private func getLog(cla: ChangelogAnalyzer, completion: (result: ChangelogParserResult) -> ()) {
+    fileprivate func getLog(_ cla: ChangelogAnalyzer, completion: (_ result: ChangelogParserResult) -> ()) {
         
         if cla.isTBD() {
-            let error = ChangelogParserError.BuildIsTBD(description: "Build date is To Be Determined")
+            let error = ChangelogParserError.buildIsTBD(description: "Build date is To Be Determined")
             let result = ChangelogParserResult.init(success: false, error: error, data: nil)
-            completion(result: result)
+            completion(result)
             return
         }
         
-        guard let buildVersion = cla.buildVersionString(), let buildNumber = cla.buildNumber(), let buildDate = cla.buildDate(), let comments = cla.comments(), let tickets = cla.tickets() where (!comments.isEmpty || !tickets.isEmpty) else {
+        guard let buildVersion = cla.buildVersionString(), let buildNumber = cla.buildNumber(), let buildDate = cla.buildDate(), let comments = cla.comments(), let tickets = cla.tickets() , (!comments.isEmpty || !tickets.isEmpty) else {
             
-            let result = ChangelogParserResult.init(success: false, error: .BuildHasNoTicketsNorComments(description: "Changelog must have tickets or comments defined"), data: nil)
-            completion(result: result)
+            let result = ChangelogParserResult.init(success: false, error: .buildHasNoTicketsNorComments(description: "Changelog must have tickets or comments defined"), data: nil)
+            completion(result)
             return
         }
         
         let logData = Changelog(version: buildVersion, buildNumber: buildNumber, date: buildDate, comments: comments, tickets: tickets)
         let result = ChangelogParserResult(success: true, error: nil, data: logData)
-        completion(result: result)
+        completion(result)
     }
     
-    private func getTicketIds(changelog: Changelog) -> String? {
+    fileprivate func getTicketIds(_ changelog: Changelog) -> String? {
 
-        guard let tickets = changelog.tickets where !tickets.isEmpty else {
+        guard let tickets = changelog.tickets , !tickets.isEmpty else {
             return nil
         }
         
         var ticketIds:String = ""
         
-        for ticket in tickets.reverse() {
-            if let ticketId = ticket.componentsSeparatedByString(" ").first {
+        for ticket in tickets.reversed() {
+            if let ticketId = ticket.components(separatedBy: " ").first {
                 
                 let appending = ( ticketIds.isEmpty ) ? ticketId : ",\(ticketId)"
                 ticketIds = ticketIds + appending
@@ -198,48 +195,39 @@ public struct ParseCommand: CommandType {
     }
     
     /// Write Issues to a file on disk.
-    private func writeIssues(issueText: String, file: String, completion: (result: ChangelogParserResult) -> ()) {
+    fileprivate func writeIssues(_ issueText: String, file: String, completion: (_ result: ChangelogParserResult) -> ()) {
         
-        guard let outUrl:NSURL = NSURL.init(fileURLWithPath: file) else {
-            completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file failed"), data: nil))
-            return
-        }
-        
+        let outUrl:URL = URL.init(fileURLWithPath: file)
         do {
-            try issueText.writeToURL(outUrl, atomically: false, encoding: NSUTF8StringEncoding)
-            completion(result: ChangelogParserResult(success: true, error: nil, data: nil))
+            try issueText.write(to: outUrl, atomically: false, encoding: String.Encoding.utf8)
+            completion(ChangelogParserResult(success: true, error: nil, data: nil))
             
         } catch let error as NSError {
-            completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file \(outUrl) failed: \(error.localizedDescription)"), data: nil))
+            completion(ChangelogParserResult(success: false, error: .fileWriteFailed(description: "Write to output file \(outUrl) failed: \(error.localizedDescription)"), data: nil))
         }
     }
     
     /// Write Version to a file on disk.
-    private func writeVersion(version: String, build:String, file: String, completion: (result: ChangelogParserResult) -> ()) {
+    fileprivate func writeVersion(_ version: String, build:String, file: String, completion: (_ result: ChangelogParserResult) -> ()) {
         
-        guard let outUrl:NSURL = NSURL.init(fileURLWithPath: file) else {
-            completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file failed"), data: nil))
-            return
-        }
-        
+        let outUrl:URL = URL.init(fileURLWithPath: file)
+
         do {
             let text = version + " #" + build
-            try text.writeToURL(outUrl, atomically: false, encoding: NSUTF8StringEncoding)
-            completion(result: ChangelogParserResult(success: true, error: nil, data: nil))
+            try text.write(to: outUrl, atomically: false, encoding: String.Encoding.utf8)
+            completion(ChangelogParserResult(success: true, error: nil, data: nil))
             
         } catch let error as NSError {
-            completion(result: ChangelogParserResult(success: false, error: .FileWriteFailed(description: "Write to output file \(outUrl) failed: \(error.localizedDescription)"), data: nil))
+            completion(ChangelogParserResult(success: false, error: .fileWriteFailed(description: "Write to output file \(outUrl) failed: \(error.localizedDescription)"), data: nil))
         }
     }
     
     /// Build a string with 'Version: x.y.z Number: buildnumber'
-    private func buildInfo(log: Changelog) -> String {
+    fileprivate func buildInfo(_ log: Changelog) -> String {
         
-        guard let buildVersion:String = log.version, let buildNumber:UInt = log.buildNumber, let buildString:String = String(buildNumber) else {
-            return ""
-        }
-        
-        return "Version: \(buildVersion) Number:\(buildString)"
+        let buildNumber:UInt = log.buildNumber
+        let buildString:String = String(buildNumber)
+        return "Version: \(log.version) Number:\(buildString)"
     }
 
 }

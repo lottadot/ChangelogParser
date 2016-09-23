@@ -12,7 +12,7 @@ import ChangelogKit
 import Result
 import Commandant
 
-if let jiraUpdaterPath = NSBundle.mainBundle().executablePath {
+if let jiraUpdaterPath = Bundle.main.executablePath {
     setenv("CHANGELOGPARSERPATH_PATH", jiraUpdaterPath, 0)
 }
 

@@ -9,26 +9,26 @@
 import Foundation
 
 /// Possible errors that can originate from ChnangelogParser.
-public enum ChangelogParserError: ErrorType, Equatable {
+public enum ChangelogParserError: Error, Equatable {
     
     /// One or more arguments was invalid.
-    case InvalidArgument(description: String)
+    case invalidArgument(description: String)
     
     /// Parse Failed
-    case ParseFailed(description: String)
+    case parseFailed(description: String)
     
     /// Output File Write Failed
-    case FileWriteFailed(description: String)
+    case fileWriteFailed(description: String)
     
     /// Build is TBD Failed
-    case BuildIsTBD(description: String)
+    case buildIsTBD(description: String)
     
-    case BuildHasNoTicketsNorComments(description: String)
+    case buildHasNoTicketsNorComments(description: String)
 }
 
 public func == (lhs: ChangelogParserError, rhs: ChangelogParserError) -> Bool {
     switch (lhs, rhs) {
-    case let (.InvalidArgument(left), .InvalidArgument(right)):
+    case let (.invalidArgument(left), .invalidArgument(right)):
         return left == right
         
     default:
@@ -39,19 +39,19 @@ public func == (lhs: ChangelogParserError, rhs: ChangelogParserError) -> Bool {
 extension ChangelogParserError: CustomStringConvertible {
     public var description: String {
         switch self {
-        case let .InvalidArgument(description):
+        case let .invalidArgument(description):
             return description
             
-        case let .ParseFailed(description):
+        case let .parseFailed(description):
             return description
             
-        case let .BuildIsTBD(description):
+        case let .buildIsTBD(description):
             return description
             
-        case let .FileWriteFailed(description):
+        case let .fileWriteFailed(description):
             return description
             
-        case let .BuildHasNoTicketsNorComments(description):
+        case let .buildHasNoTicketsNorComments(description):
             return description
         }
     }

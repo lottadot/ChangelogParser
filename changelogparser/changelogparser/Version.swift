@@ -17,13 +17,13 @@ import Commandant
 private let version = "0.1" // FIXME. See TODO below.
 
 /// Provide the Version of ChangelogParser
-public struct VersionCommand: CommandType {
+public struct VersionCommand: CommandProtocol {
     public let verb = "version"
     public let function = "Display the current version of ChangelogParser"
     
-    public func run(options: NoOptions<ChangelogParserError>) -> Result<(), ChangelogParserError> {
+    public func run(_ options: NoOptions<ChangelogParserError>) -> Result<(), ChangelogParserError> {
         print(version) // TODO. How to get a bundle for an app where you're running the app's executable w/o the app?
-        return .Success(())
+        return .success(())
     }
 }
 
