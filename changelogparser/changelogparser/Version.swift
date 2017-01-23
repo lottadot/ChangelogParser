@@ -14,7 +14,7 @@ import ChangelogKit
 import Result
 import Commandant
 
-private let version = "0.1" // FIXME. See TODO below.
+private let version = "0.1.0" // FIXME. See TODO below.
 
 /// Provide the Version of ChangelogParser
 public struct VersionCommand: CommandProtocol {

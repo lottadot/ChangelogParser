@@ -14,6 +14,7 @@ FRAMEWORKS_FOLDER=/Library
 BINARIES_FOLDER=/usr/local/bin
 
 OUTPUT_PACKAGE=changelogparser.pkg
+OUTPUT_FRAMEWORK=ChangelogKit.framework
 
 VERSION_STRING=$(shell cd changelogparser && agvtool what-marketing-version -terse1)
 COMPONENTS_PLIST=changelogparser/changelogparser/Components.plist
@@ -41,25 +42,49 @@ test: clean bootstrap
 
 clean:
 	rm -f "$(OUTPUT_PACKAGE)"
+	rm -f "$(OUTPUT_FRAMEWORK_ZIP)"
 	rm -rf "$(TEMPORARY_FOLDER)"
 	$(BUILD_TOOL) $(XCODEFLAGS) clean
 
 install: package
 	sudo installer -pkg changelogparser.pkg -target /
 
+uninstall:
+	rm -rf "$(FRAMEWORKS_FOLDER)/$(OUTPUT_FRAMEWORK)"
+	rm -rf "$(PREFIX)/Frameworks/$(OUTPUT_FRAMEWORK)"
+	rm -f "$(BINARIES_FOLDER)/changelogparser"
+
 installables: clean bootstrap
+	# $(BUILD_TOOL) $(XCODEFLAGS) install
+
+	# mkdir -p "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)" "$(TEMPORARY_FOLDER)$(BINARIES_FOLDER)"
+	# mv -f "$(FRAMEWORK_BUNDLE)/" "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)"
+	# mv -fv "$(EXECUTABLE)" "$(TEMPORARY_FOLDER)$(BINARIES_FOLDER)/changelogparser"
+	# rm -rf "$(BUILT_BUNDLE)"
+
 	$(BUILD_TOOL) $(XCODEFLAGS) install
 
 	mkdir -p "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)" "$(TEMPORARY_FOLDER)$(BINARIES_FOLDER)"
-	mv -f "$(FRAMEWORK_BUNDLE)/" "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)"
+	
+	# copy our Kit Framework into the destination Frameworks directory.
+	rsync -a --prune-empty-dirs --include '*/'  --exclude '/libswift*.dylib' "$(FRAMEWORK_BUNDLE)/ChangelogKit.framework" "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)/Frameworks"
+
+	# copy the app's frameworks into the "ChangelogKit Framework" *Frameworks directory* that we put into the destination Frameworks directory.
+	rsync -a --prune-empty-dirs --include '*/'  --exclude '/libswift*.dylib /ChangelogKit.framework' "$(FRAMEWORK_BUNDLE)/" "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)/Frameworks/$(OUTPUT_FRAMEWORK)/Versions/Current/Frameworks"
+
 	mv -fv "$(EXECUTABLE)" "$(TEMPORARY_FOLDER)$(BINARIES_FOLDER)/changelogparser"
 	rm -rf "$(BUILT_BUNDLE)"
 
 prefix_install: installables
+	# mkdir -p "$(PREFIX)/Frameworks" "$(PREFIX)/bin"
+	# cp -rf "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)" "$(PREFIX)/Frameworks/"
+	# cp -f "$(TEMPORARY_FOLDER)$(BINARIES_FOLDER)/changelogparser" "$(PREFIX)/bin/"
+	# install_name_tool -add_rpath "@executable_path/../Frameworks/ChangelogParserKit.framework/Versions/Current/Frameworks/" "$(PREFIX)/bin/changelogparser"
+
 	mkdir -p "$(PREFIX)/Frameworks" "$(PREFIX)/bin"
-	cp -rf "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)" "$(PREFIX)/Frameworks/"
+	cp -Rf "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)/Frameworks/$(OUTPUT_FRAMEWORK)" "$(PREFIX)/Frameworks/"
 	cp -f "$(TEMPORARY_FOLDER)$(BINARIES_FOLDER)/changelogparser" "$(PREFIX)/bin/"
-	install_name_tool -add_rpath "@executable_path/../Frameworks/ChangelogParserKit.framework/Versions/Current/Frameworks/" "$(PREFIX)/bin/changelogparser"
+	install_name_tool -add_rpath "@executable_path/../Frameworks/$(OUTPUT_FRAMEWORK)/Versions/Current/Frameworks/" "$(PREFIX)/bin/changelogparser"
 
 package: installables
 	pkgbuild \
