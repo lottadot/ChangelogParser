@@ -195,6 +195,7 @@
 				3462E6341D69DB9C0092DC77 /* Sources */,
 				3462E6351D69DB9C0092DC77 /* Frameworks */,
 				3462E6361D69DB9C0092DC77 /* Resources */,
+				348CB8481E3A984800E72136 /* Extract CLI */,
 				3462E66B1D69DFDB0092DC77 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -313,6 +314,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		348CB8481E3A984800E72136 /* Extract CLI */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Extract CLI";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(EXECUTABLE_NAME)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\n#\n# Extracts the carthage CLI tool from its application bundle. Meant to be run\n# as part of an Xcode Run Script build phase.\n\ncp -v \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_NAME}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3462E6341D69DB9C0092DC77 /* Sources */ = {
