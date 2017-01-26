@@ -76,11 +76,6 @@ installables: clean bootstrap
 	rm -rf "$(BUILT_BUNDLE)"
 
 prefix_install: installables
-	# mkdir -p "$(PREFIX)/Frameworks" "$(PREFIX)/bin"
-	# cp -rf "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)" "$(PREFIX)/Frameworks/"
-	# cp -f "$(TEMPORARY_FOLDER)$(BINARIES_FOLDER)/changelogparser" "$(PREFIX)/bin/"
-	# install_name_tool -add_rpath "@executable_path/../Frameworks/ChangelogParserKit.framework/Versions/Current/Frameworks/" "$(PREFIX)/bin/changelogparser"
-
 	mkdir -p "$(PREFIX)/Frameworks" "$(PREFIX)/bin"
 	cp -Rf "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)/Frameworks/$(OUTPUT_FRAMEWORK)" "$(PREFIX)/Frameworks/"
 	cp -f "$(TEMPORARY_FOLDER)$(BINARIES_FOLDER)/changelogparser" "$(PREFIX)/bin/"
