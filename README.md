@@ -77,7 +77,7 @@ To use this in combination with JiraUpdater:
 ```
 $ changelogparser parse --withIssues
 $ jiraUpdater update  --issueids "$(< CHANGELOG-ISSUES.TXT)"
-// ()COMING SOON as of 2016-08-21)
+or
 $ jiraUpdater comment --issueids --message "$(< CHANGELOG-VERSION.TXT)"
 ```
 
