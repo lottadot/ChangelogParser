@@ -3,13 +3,9 @@ PREFIX?=/usr/local
 BUILD_TOOL?=xcodebuild
 
 XCODEFLAGS=-workspace 'ChangelogTools.xcworkspace' -scheme 'changelogparser' DSTROOT=$(TEMPORARY_FOLDER) 
-#CONFIGURATION_BUILD_DIR=$(TEMPORARY_FOLDER) CONFIGURATION_TEMP_DIR=$(TEMPORARY_FOLDER)
-
-
 BUILT_BUNDLE=$(TEMPORARY_FOLDER)/Applications/changelogparser.app
 FRAMEWORK_BUNDLE=$(BUILT_BUNDLE)/Contents/Frameworks
 EXECUTABLE=$(BUILT_BUNDLE)/Contents/MacOS/changelogparser
-
 FRAMEWORKS_FOLDER=/Library
 BINARIES_FOLDER=/usr/local/bin
 
@@ -55,13 +51,6 @@ uninstall:
 	rm -f "$(BINARIES_FOLDER)/changelogparser"
 
 installables: clean bootstrap
-	# $(BUILD_TOOL) $(XCODEFLAGS) install
-
-	# mkdir -p "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)" "$(TEMPORARY_FOLDER)$(BINARIES_FOLDER)"
-	# mv -f "$(FRAMEWORK_BUNDLE)/" "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)"
-	# mv -fv "$(EXECUTABLE)" "$(TEMPORARY_FOLDER)$(BINARIES_FOLDER)/changelogparser"
-	# rm -rf "$(BUILT_BUNDLE)"
-
 	$(BUILD_TOOL) $(XCODEFLAGS) install
 
 	mkdir -p "$(TEMPORARY_FOLDER)$(FRAMEWORKS_FOLDER)" "$(TEMPORARY_FOLDER)$(BINARIES_FOLDER)"
